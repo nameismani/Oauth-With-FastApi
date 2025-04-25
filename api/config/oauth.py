@@ -1,6 +1,10 @@
 from pydantic import BaseModel
 import os
 from typing import Optional
+from dotenv import load_dotenv
+# from pathlib import Path
+# base_dir = Path(__file__).resolve().parent.parent.parent
+load_dotenv()
 
 print(os.getenv("GOOGLE_CLIENT_ID", ""),"sadfsdaf")
 

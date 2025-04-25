@@ -27,28 +27,34 @@ async def get_google_auth_url():
     
     return {"url": auth_url}
 
+from pydantic import BaseModel
+class CallBackRequestData(BaseModel):
+   code: str
+
+
 @router.post("/auth/google/callback")
-async def google_auth_callback(code: str):
+async def google_auth_callback(data: CallBackRequestData):
     """
     Handle the Google OAuth callback with the authorization code
     """
+  
     try:
         # Exchange the authorization code for tokens
         token_data = {
             "client_id": google_oauth_config.client_id,
             "client_secret": google_oauth_config.client_secret,
-            "code": code,
+            "code": data.code,
             "grant_type": "authorization_code",
             "redirect_uri": google_oauth_config.redirect_uri
         }
-        
+  
         async with httpx.AsyncClient() as client:
             # Get tokens from Google
             token_response = await client.post(
                 google_oauth_config.token_endpoint, 
                 data=token_data
             )
-            
+         
             if token_response.status_code != 200:
                 return JSONResponse(
                     status_code=status.HTTP_400_BAD_REQUEST,

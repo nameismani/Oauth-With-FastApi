@@ -37,6 +37,7 @@ export const useAuthStore = create<AuthState>()(
                 set({ isLoading: true, error: null });
 
                 try {
+                    console.log(code, "asdfsfda")
                     const response = await axios.post(`${API_URL}/auth/google/callback`, { code });
 
                     if (response.data.success) {
