@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from routes import  auth
 
 app = FastAPI(title="I2Global Brand Studio API")
 
@@ -13,6 +13,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth.router, tags=["Authentication"])
 
 
 @app.get("/")
