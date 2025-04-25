@@ -21,7 +21,7 @@ interface AuthState {
     // Actions
     login: (code: string) => Promise<void>;
     logout: () => void;
-    fetchUser: () => Promise<void>;
+    // fetchUser: () => Promise<void>;
     getGoogleAuthUrl: () => Promise<string>;
 }
 
@@ -81,51 +81,51 @@ export const useAuthStore = create<AuthState>()(
                 });
             },
 
-            fetchUser: async () => {
-                const token = Cookies.get('token');
+            // fetchUser: async () => {
+            //     const token = Cookies.get('token');
 
-                if (!token) {
-                    set({ isAuthenticated: false });
-                    return;
-                }
+            //     if (!token) {
+            //         set({ isAuthenticated: false });
+            //         return;
+            //     }
 
-                set({ isLoading: true });
+            //     set({ isLoading: true });
 
-                try {
-                    // Set axios default header
-                    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            //     try {
+            //         // Set axios default header
+            //         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-                    const response = await axios.get(`${API_URL}/auth/me`);
+            //         const response = await axios.get(`${API_URL}/auth/me`);
 
-                    if (response.data.success) {
-                        set({
-                            user: response.data.user,
-                            isAuthenticated: true,
-                            isLoading: false
-                        });
-                    } else {
-                        // Token might be invalid
-                        Cookies.remove('token');
-                        delete axios.defaults.headers.common['Authorization'];
+            //         if (response.data.success) {
+            //             set({
+            //                 user: response.data.user,
+            //                 isAuthenticated: true,
+            //                 isLoading: false
+            //             });
+            //         } else {
+            //             // Token might be invalid
+            //             Cookies.remove('token');
+            //             delete axios.defaults.headers.common['Authorization'];
 
-                        set({
-                            user: null,
-                            isAuthenticated: false,
-                            isLoading: false
-                        });
-                    }
-                } catch (error) {
-                    // Token might be invalid
-                    Cookies.remove('token');
-                    delete axios.defaults.headers.common['Authorization'];
+            //             set({
+            //                 user: null,
+            //                 isAuthenticated: false,
+            //                 isLoading: false
+            //             });
+            //         }
+            //     } catch (error) {
+            //         // Token might be invalid
+            //         Cookies.remove('token');
+            //         delete axios.defaults.headers.common['Authorization'];
 
-                    set({
-                        user: null,
-                        isAuthenticated: false,
-                        isLoading: false
-                    });
-                }
-            },
+            //         set({
+            //             user: null,
+            //             isAuthenticated: false,
+            //             isLoading: false
+            //         });
+            //     }
+            // },
 
             getGoogleAuthUrl: async () => {
                 try {

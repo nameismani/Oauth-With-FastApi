@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 # base_dir = Path(__file__).resolve().parent.parent.parent
 load_dotenv()
 
-print(os.getenv("GOOGLE_CLIENT_ID", ""),"sadfsdaf")
+# print(os.getenv("GOOGLE_CLIENT_ID", ""),"sadfsdaf")
 
 class GoogleOAuthConfig(BaseModel):
     client_id: str = os.getenv("GOOGLE_CLIENT_ID", "")

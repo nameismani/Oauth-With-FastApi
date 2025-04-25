@@ -7,19 +7,20 @@ import Image from 'next/image';
 
 export default function Dashboard() {
     const router = useRouter();
-    const { user, isAuthenticated, isLoading, logout, fetchUser } = useAuthStore();
+    // const { user, isAuthenticated, isLoading, logout, fetchUser } = useAuthStore();
+    const { user, isAuthenticated, isLoading, logout, } = useAuthStore();
 
     useEffect(() => {
         // Fetch user data if authenticated but no user data
-        if (isAuthenticated && !user) {
-            fetchUser();
-        }
+        // if (isAuthenticated && !user) {
+        //     fetchUser();
+        // }
 
         // Redirect to login if not authenticated and not loading
         if (!isAuthenticated && !isLoading) {
             router.push('/login');
         }
-    }, [isAuthenticated, isLoading, user, fetchUser, router]);
+    }, [isAuthenticated, isLoading, user, router]);
 
     if (isLoading || !user) {
         return (

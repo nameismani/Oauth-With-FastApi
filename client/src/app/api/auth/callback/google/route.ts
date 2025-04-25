@@ -5,6 +5,7 @@ export async function GET(request: NextRequest) {
     const code = searchParams.get('code');
     const error = searchParams.get('error');
 
+    console.log(searchParams, code, error, "backend google triggered")
     if (error) {
         return NextResponse.redirect(new URL('/login?error=' + error, request.url));
     }
