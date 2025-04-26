@@ -10,6 +10,7 @@ interface User {
   email: string;
   name?: string;
   picture?: string;
+  sub?: string; // Added for Google OAuth
 }
 
 interface AuthState {
@@ -23,6 +24,7 @@ interface AuthState {
   logout: () => void;
   // fetchUser: () => Promise<void>;
   getGoogleAuthUrl: () => Promise<string>;
+  loginWithGoogle: (userData: any) => void; // New method for client-side auth
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -32,6 +34,36 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       isLoading: false,
       error: null,
+
+      // New method for client-side Google authentication
+      loginWithGoogle: (userData: any) => {
+        if (!userData) {
+          return;
+        }
+
+        try {
+          // Format user data from Google OAuth
+          const user = {
+            id: userData.sub || userData.id,
+            email: userData.email,
+            name: userData.name,
+            picture: userData.picture,
+            sub: userData.sub,
+          };
+
+          set({
+            user,
+            isAuthenticated: true,
+            error: null,
+          });
+
+          // Store in session storage for persistence
+          sessionStorage.setItem("google_user_data", JSON.stringify(user));
+        } catch (error) {
+          console.error("Error logging in with Google:", error);
+          set({ error: "Failed to login with Google" });
+        }
+      },
 
       login: async (code: string) => {
         set({ isLoading: true, error: null });
@@ -78,6 +110,10 @@ export const useAuthStore = create<AuthState>()(
 
         // Remove authorization header
         delete axios.defaults.headers.common["Authorization"];
+
+        // Clear any Google auth data
+        sessionStorage.removeItem("google_user_data");
+        sessionStorage.removeItem("google_token");
 
         set({
           user: null,
