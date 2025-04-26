@@ -22,7 +22,7 @@ async def get_google_auth_url():
         f"&response_type=code"
         f"&scope={google_oauth_config.scope}"
         f"&access_type=offline"
-        f"&prompt=consent"
+    
     )
     
     return {"url": auth_url}
@@ -111,7 +111,13 @@ async def google_auth_callback(data: CallBackRequestData):
             
             # Create JWT token
             access_token = create_access_token(
-                data={ "email": user_info["email"]}
+                data={
+                    "email": user_info["email"],
+                    "name": user_info.get("name"),
+                    "picture": user_info.get("picture"),
+                    "provider": "google",
+                    "sub": user_info.get("sub")
+                }
             )
             
             return {
@@ -145,27 +151,30 @@ async def get_current_user(authorization: Optional[str] = Header(None)):
     token = authorization.replace("Bearer ", "")
     payload = verify_token(token)
     
-    if not payload or "sub" not in payload:
+    if not payload or "email" not in payload:
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"success": False, "message": "Invalid or expired token"}
         )
     
-    user_id = payload["sub"]
-    user = users_collection.find_one({"_id": ObjectId(user_id)})
+    # user_id = payload["sub"]
+    # user = users_collection.find_one({"_id": ObjectId(user_id)})
     
-    if not user:
-        return JSONResponse(
-            status_code=status.HTTP_404_NOT_FOUND,
-            content={"success": False, "message": "User not found"}
-        )
+    # if not user:
+    #     return JSONResponse(
+    #         status_code=status.HTTP_404_NOT_FOUND,
+    #         content={"success": False, "message": "User not found"}
+    #     )
     
     return {
         "success": True,
         "user": {
-            "id": str(user["_id"]),
-            "email": user["email"],
-            "name": user.get("name"),
-            "picture": user.get("google_picture")
+            # "id": str(user["_id"]),
+            # "email": user["email"],
+            # "name": user.get("name"),
+            # "picture": user.get("google_picture")
+              "email": payload["email"],
+            "name": payload.get("name"),
+            "picture": payload.get("picture")
         }
     }
